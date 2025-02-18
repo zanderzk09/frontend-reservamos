@@ -6,9 +6,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        JosefinSans: ['"Josefin Sans"', "sans-serif"],
         Montserrat: ['"Montserrat"', "san-serif"],
-        OpenSans: ['"Open Sans"', "sans-serif"],
 
       },
       fontWeight: {
