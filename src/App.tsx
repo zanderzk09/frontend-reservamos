@@ -1,4 +1,4 @@
-import { PlacesList } from './components';
+import { AppRoutes } from './routes/AppRoutes';
 
 export const App = () => {
 
@@ -6,7 +6,7 @@ export const App = () => {
 
     <div className="bg-gray-800">
 
-      <PlacesList />
+      <AppRoutes />
 
     </div>
 

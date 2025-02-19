@@ -1,28 +1,98 @@
-//ESTE ARCHIVO FUE RESULTADO DE LA INSTRUCCIÓN PROPORCIONADAD A LA IA PARA DIVIDIR LA LÓGICA DEL CONTROLADOR EN ARCHIVOS MÁS PEQUEŃOS Y ESCALABLES.
-
-import { WeatherIcon } from '../helpers';
-import { Weather } from '../interfaces';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';  // Importa useNavigate
+import { fetchWeatherByCity } from '../api';
+import { kelvinToCelsius } from '../helpers';
+import { WeatherInfo } from './weatherInfo';
 
 interface WeatherDetailsProps {
-  weather: Weather[];
+  lat: number;
+  long: number;
+  detail: boolean;
 }
 
-export const WeatherDetails = ({ weather }: WeatherDetailsProps) => (
-  <ul className="space-y-10">
-    {weather.map((w, idx) => (
-      <li key={idx} className="flex items-center justify-between border-b pb-4 border-gray-600 transition-all duration-300 ease-in-out">
-        <div className="mt-2">
-          <strong className="text-sm font-light font-Montserrat text-white">
-            {w.date}: {w.description.toUpperCase()}
-          </strong>
-          <div className="flex items-center space-x-2 mt-2">
-            <WeatherIcon iconCode={w.iconCode} size={40} />
-            <span className="text-gray-400 font-light font-Montserrat text-sm">
-              {w.min_temperature}°C - {w.max_temperature}°C
-            </span>
+interface WeatherData {
+  temp: number;
+  tempMax: number;
+  tempMin: number;
+  weather: string;
+  icon: string;
+  date: string;
+}
+
+export const WeatherDetails = ({ lat, long, detail, }: WeatherDetailsProps) => {
+  const navigate = useNavigate(); 
+  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+
+  useEffect(() => {
+    const loadWeather = async () => {
+      try {
+        const data = await fetchWeatherByCity(lat, long);
+        setWeatherData(data as any);
+      } catch (error) {
+        console.error('Error al cargar el clima:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWeather();
+  }, [lat, long]);
+
+  if (loading) return <p>Cargando clima...</p>;
+  if (!weatherData.length) return <p>No hay datos de clima disponibles.</p>;
+
+  const currentWeather = weatherData[0];
+  const dailyForecast = weatherData.filter((_, index) => index % 8 === 0);
+
+  const handleBackClick = () => {
+    navigate('/'); 
+  };
+
+  return (
+    <div className="p-4 mt-10 bg-gray-900 text-white rounded-lg">
+      <h2 className="text-2xl font-bold">Current Weather</h2>
+      <div className="flex items-center gap-4 mt-2">
+
+        <WeatherInfo icon={currentWeather.icon} weather={currentWeather.weather} temp={currentWeather.temp} />
+
+      </div>
+
+      {detail && (
+        <>
+          <button
+            onClick={handleBackClick}
+            className="mt-4 px-6 py-2 bg-blue-600 rounded-md text-white hover:bg-blue-700"
+          >
+            Home
+          </button>
+
+          <p className="mt-2">
+            Máx: {kelvinToCelsius(currentWeather.tempMax)}°C | Mín: {kelvinToCelsius(currentWeather.tempMin)}°C
+          </p>
+
+          <h3 className="text-xl font-bold mt-4">Forecast for the next few days</h3>
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            {dailyForecast.map((day, index) => (
+              <div key={index} className="p-2 bg-gray-800 rounded-lg text-center">
+                <img
+                  src={`https://openweathermap.org/img/wn/${day.icon}.png`}
+                  alt={day.weather}
+                  className="mx-auto"
+                />
+
+                <p className="font-semibold">{day.weather}</p>
+                <p className="font-semibold">{day.date}</p>
+                <p>{kelvinToCelsius(day.temp)}°C</p>
+                <p className="text-sm">Max: {kelvinToCelsius(day.tempMax)}°C</p>
+                <p className="text-sm">Mín: {kelvinToCelsius(day.tempMin)}°C</p>
+              </div>
+            ))}
+
           </div>
-        </div>
-      </li>
-    ))}
-  </ul>
-);
+        </>
+      )}
+    </div>
+  );
+};

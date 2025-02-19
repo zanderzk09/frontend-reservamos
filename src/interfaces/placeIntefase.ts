@@ -4,4 +4,6 @@ export interface Place {
   city_name: string;
   state: string;
   weather: Weather[];
+  lat: number;
+  long: number;
 }
