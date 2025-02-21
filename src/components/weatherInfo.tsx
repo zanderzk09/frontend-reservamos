@@ -14,7 +14,7 @@ export const WeatherInfo = ({ temp, weather, icon }: WeatherInfoProps) => {
       <div>
         <p className="text-2xl font-bold">Today</p>
 
-        <p className="text-lg">{weather}</p>
+        <p className="text-lg">{weather.charAt(0).toUpperCase() + weather.slice(1)}</p>
         <p className="text-3xl">{kelvinToCelsius(temp)}°C</p>
 
       </div>

@@ -14,12 +14,8 @@ export const CityWeatherDetail = () => {
   if (!lat || !long) return <p>Error.</p>;
 
   return (
-    <div className="">
-      <div className="text-2xl text-gray-200 font-bold font-Montserrat">
-        {placeName}, {placeState}
-      </div>
-
-      <WeatherDetails lat={lat} long={long} detail={true} />
+    <div className="-mt-10">
+      <WeatherDetails lat={lat} long={long} detail={true} placeName={placeName} placeState={placeState} />
     </div>
   );
 };

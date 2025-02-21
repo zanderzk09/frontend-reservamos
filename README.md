@@ -88,7 +88,7 @@ export const getWeatherByPlace = async (req, res) => {
 - 3 
 
 ```
-  Agrega una ruta con react-router-dom para cada componente y así poder navegar entre ambos, el primero tendrá el path=/ y el otro /detail, estes el código:
+  Agrega una ruta con react-router-dom para cada componente y así poder navegar entre ambos, el primero tendrá el path=/ y el otro /detail, este es el código:
   import { Place } from '../interfaces';
   import { InfoView } from './infoView';
   import { WeatherDetails } from './WeatherDetails';
